@@ -1,0 +1,53 @@
+{%extends "base.html"%}
+
+{%block title%}Segment chee dung chung{%endblock%}
+
+{%block body%}
+</style>
+
+<div class="card p-3" style="position:sticky; top:84px;">
+    <h2>Rickroll generator</h3>
+    <div class="form-group">
+        <label for="message">Enter your message:</label>
+        <input type="text" class="form-control" id="message" placeholder="Enter your message">
+    </div>
+    <div class="form-group mt-3">
+        <button class="btn btn-primary" onclick="generateLink()">Generate Link</button>
+    </div>
+    <div class="form-group mt-3" id="result" style="display: none;">
+        <label>Your Rickroll Link:</label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="rickrollLink" readonly>
+            <div class="input-group-append">
+                <button id="button" class="btn btn-secondary" onclick="copyLink()">Copy</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generateLink() {
+            const message = document.getElementById('message').value;
+            const encodedMessage = encodeURIComponent(message);
+            const link = `/info/${encodedMessage}`;
+            document.getElementById('rickrollLink').value = window.location.origin + link;
+            document.getElementById('result').style.display = 'block';
+        }
+
+        function copyLink() {
+            const linkInput = document.getElementById('rickrollLink');
+            linkInput.select();
+            document.execCommand('copy');
+            document.getElementById('button').textContent = 'Copied';
+            document.getElementById('button').classList.remove('btn-secondary');
+            document.getElementById('button').classList.add('btn-success');
+            setTimeout(() => {
+                document.getElementById('button').textContent = 'Copy';
+                document.getElementById('button').classList.remove('btn-success');
+                document.getElementById('button').classList.add('btn-secondary');
+            }, 2000);
+        }
+    </script>
+
+</div>
+
+{%endblock%}
