@@ -1,0 +1,130 @@
+{%extends "base.html"%}
+
+{%block title%}Segment chee dung chung{%endblock%}
+
+{%block body%}
+</style>
+
+<div class="card p-3" style="position:sticky; top:84px;">
+    <h2>Segment chee dùng chung. Một đoạn segment tree [1, 1e9]. Bạn được sử đụng 2 truy vấn sau</h3>
+    <ul>
+        <li>Update(start, end, value): Cập nhật đoạn [start, end] thành value</li>
+        <li>Get(position): Lấy giá trị tại vị trí position</li>
+    </ul>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Update Segment</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Start Position</label>
+                        <input type="number" class="form-control" id="updateStart">
+                    </div>
+                    <div class="form-group">
+                        <label>End Position</label>
+                        <input type="number" class="form-control" id="updateEnd">
+                    </div>
+                    <div class="form-group">
+                        <label>Value</label>
+                        <input type="number" class="form-control" id="updateValue">
+                    </div>
+                    <button class="btn btn-primary mt-3" onclick="handleUpdate()">Update</button>
+                    <div id="updateResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Get Value</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Position</label>
+                        <input type="number" class="form-control" id="getPosition">
+                    </div>
+                    <button class="btn btn-primary mt-3" onclick="handleGet()">Get Value</button>
+                    <div id="getResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function handleUpdate() {
+            const start = parseInt(document.getElementById('updateStart').value);
+            const end = parseInt(document.getElementById('updateEnd').value);
+            const value = parseInt(document.getElementById('updateValue').value);
+            
+            try {
+                const result = await updateSegment(start, end, value);
+                if (result.success) {
+                    document.getElementById('updateResult').innerHTML = 
+                        '<div class="alert alert-success">Update successful</div>';
+                } else {
+                    document.getElementById('updateResult').innerHTML = 
+                        `<div class="alert alert-danger">${result.error}</div>`;
+                }
+            } catch (error) {
+                document.getElementById('updateResult').innerHTML = 
+                    '<div class="alert alert-danger">Error occurred</div>';
+            }
+        }
+
+        async function handleGet() {
+            const position = parseInt(document.getElementById('getPosition').value);
+            
+            try {
+                const result = await getValue(position);
+                if (result.value !== undefined) {
+                    document.getElementById('getResult').innerHTML = 
+                        `<div class="alert alert-success">Value at position ${position}: ${result.value}</div>`;
+                } else {
+                    document.getElementById('getResult').innerHTML = 
+                        `<div class="alert alert-danger">${result.error}</div>`;
+                }
+            } catch (error) {
+                document.getElementById('getResult').innerHTML = 
+                    '<div class="alert alert-danger">Error occurred</div>';
+            }
+        }
+    </script>
+
+
+    <script>
+        async function updateSegment(start, end, value) {
+            const response = await fetch('/segment/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    start: start,
+                    end: end,
+                    value: value
+                })
+            });
+            return await response.json();
+        }
+
+        async function getValue(position) {
+            const response = await fetch('/segment/get', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    position: position
+                })
+            });
+            return await response.json();
+        }
+    </script>
+
+</div>
+
+{%endblock%}
